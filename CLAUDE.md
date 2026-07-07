@@ -43,7 +43,7 @@ The marketplace (`name: archangl`) lists three plugins:
 
 | Plugin | What it is | Notes |
 | --- | --- | --- |
-| `archangl-search` | Deep-research **orchestrator** — one skill, `archangl-deep-research`, plus a `commands/deep-research.md` slash-command wrapper | **Depends on** `exa` + `firecrawl-workflows`; installing it auto-pulls both |
+| `archangl-search` | Deep-research **orchestrator** — one skill, `archangl-deep-research`, plus a `commands/archangl-search.md` slash-command wrapper | **Depends on** `exa` + `firecrawl-workflows`; installing it auto-pulls both |
 | `exa` | **Vendored snapshot** of the Exa plugin (hosted HTTP MCP + `search`/`agent` skills) | Frozen copy; see `plugins/exa/SNAPSHOT.md` |
 | `firecrawl-workflows` | **Vendored snapshot** of Firecrawl Workflows (16 skills) | Frozen copy; see `plugins/firecrawl-workflows/SNAPSHOT.md` |
 
@@ -57,16 +57,18 @@ tool calls.
 **Why `archangl-search` also ships a `commands/` file.** Skills are supposed to
 double as `/plugin:skill` slash commands, but that exposure is not reliable on every
 surface — in a Claude Code **web/cloud** session the skill did not appear in the `/`
-menu. So the plugin ships an explicit `commands/deep-research.md`, which is auto-scanned
-(no `plugin.json` entry needed) and surfaces as `/archangl-search:deep-research`
+menu. So the plugin ships an explicit `commands/archangl-search.md`, which is auto-scanned
+(no `plugin.json` entry needed) and surfaces as `/archangl-search:archangl-search`
 everywhere (terminal, web, desktop). The command is a **thin wrapper**: it just invokes
 the `archangl-deep-research` skill, so the SKILL.md stays the single source of truth —
-don't duplicate the workflow into the command. Two rules make it work:
-its name is deliberately **different** from the skill's (`deep-research` vs
-`archangl-deep-research`) because a same-named skill *shadows* the command, re-hiding
-it; and it sets `disable-model-invocation: true` so the model still auto-invokes the
-skill (not two things) while the command stays a purely user-typed entry point. This
-is the one sanctioned use of `commands/` in this repo — everywhere else, prefer skills.
+don't duplicate the workflow into the command. The command name (`archangl-search`,
+matching the plugin) is chosen to dodge two collisions: it must **not** match the
+plugin's own `archangl-deep-research` skill, because a same-named skill *shadows* the
+command and re-hides it; and it avoids the obvious `deep-research`, which would collide
+with Claude Code's built-in `deep-research` skill. It also sets
+`disable-model-invocation: true` so the model still auto-invokes the skill (not two
+things) while the command stays a purely user-typed entry point. This is the one
+sanctioned use of `commands/` in this repo — everywhere else, prefer skills.
 
 **Provider transport is MCP, never CLI.** The two providers reach their engines over
 MCP through different routes, on purpose:
