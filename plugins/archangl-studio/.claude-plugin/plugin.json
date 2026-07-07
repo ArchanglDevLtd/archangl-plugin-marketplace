@@ -1,0 +1,9 @@
+{
+  "name": "archangl-studio",
+  "description": "Creative production skills for cinematic ad and video-gen workflows. Includes improve-shotlist: translates emotion-flavored shot lists into directorial camera language.",
+  "author": {
+    "name": "archangl",
+    "email": "hello@archangl.ai"
+  },
+  "keywords": ["video", "shotlist", "camera", "directing", "video-gen", "higgsfield"]
+}
