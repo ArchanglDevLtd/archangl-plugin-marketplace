@@ -9,7 +9,9 @@ You are the orchestrator. Your job: understand the query, plan the work, dispatc
 
 ## Prerequisites: Auth
 
-Server: `https://mcp.exa.ai/mcp`.
+This skill does not provision its own Exa MCP server — it expects one to already be connected in the session and calls its tools (`web_search_exa`, `web_fetch_exa`, etc.) by bare name, whichever server exposes them.
+
+If no Exa MCP tools are available, tell the user to connect one themselves, e.g. by adding Exa's hosted endpoint (`https://mcp.exa.ai/mcp`) via `claude mcp add` / `/mcp`:
 
 1. **OAuth (recommended)** — client opens `auth.exa.ai`, user signs in with Google / SSO / email, JWT is attached automatically. No key to copy.
 2. **API key** — if OAuth isn't available, get one at https://dashboard.exa.ai/api-keys and pass it via `Authorization: Bearer …`, `?exaApiKey=…`, or `EXA_API_KEY` (local npm).

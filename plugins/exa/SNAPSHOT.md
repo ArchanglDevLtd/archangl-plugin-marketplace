@@ -23,21 +23,34 @@ from the upstream repo or marketplace.
 - `LICENSE` — upstream license, retained for attribution
 
 The upstream repo is primarily the source for the Exa **MCP server** (`src/`,
-`tests/`, `api/`, `package.json`, `Dockerfile`, `llm_mcp_docs.txt`, etc.). This
-plugin connects to Exa's **hosted** HTTP MCP endpoint (`https://mcp.exa.ai/mcp`),
-so none of that server code is needed at runtime and was intentionally not copied.
+`tests/`, `api/`, `package.json`, `Dockerfile`, `llm_mcp_docs.txt`, etc.). Upstream
+has the plugin connect to Exa's **hosted** HTTP MCP endpoint
+(`https://mcp.exa.ai/mcp`) itself; this snapshot does not (see below), so none of
+that server code is needed at runtime and was intentionally not copied.
 
-## Only change from upstream
+## Changes from upstream
 
-`version` was removed from `plugin.json` so this repo's git commit SHA drives
-versioning and propagation (see `CLAUDE.md`). The upstream value (`3.3.10`) is
-recorded above. The manifest declares no `skills` array; both skills load via the
-default scan of `skills/`, exactly as upstream ships it.
+- `version` was removed from `plugin.json` so this repo's git commit SHA drives
+  versioning and propagation (see `CLAUDE.md`). The upstream value (`3.3.10`) is
+  recorded above. The manifest declares no `skills` array; both skills load via the
+  default scan of `skills/`, exactly as upstream ships it.
+- `plugin.json`'s `mcpServers` block (pointing at `https://mcp.exa.ai/mcp`) was
+  **removed** on 2026-07-07. Upstream has the plugin provision its own hosted Exa
+  MCP server. That collided with sessions that already have their own Exa MCP
+  server configured and OAuth'd — the plugin would stand up a second, unauthenticated
+  `exa` server alongside it, and which one a skill's tool calls resolved to became
+  unpredictable. The skills reference tools by bare name (`web_search_exa`,
+  `agent_create_run`, etc.), not by fully-qualified `mcp__exa__...` names, so they
+  work against whichever MCP server in the session exposes those tools — dropping
+  the bundled server is safe and makes this plugin lean on the session's own Exa MCP
+  connection instead of provisioning a competing one.
 
 ## Auth note
 
-The hosted Exa MCP works anonymously (rate-limited); OAuth or an API key raises
-limits. See `skills/search/SKILL.md` → "Prerequisites: Auth".
+This plugin no longer provisions an Exa MCP server itself — it expects one to
+already be connected in the session (the user's own MCP config, OAuth'd or with an
+API key). See `skills/search/SKILL.md` → "Prerequisites: Auth" for what to tell the
+user if no Exa MCP tools are available.
 
 ## Refreshing this snapshot
 
