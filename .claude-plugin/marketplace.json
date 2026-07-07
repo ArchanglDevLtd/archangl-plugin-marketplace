@@ -7,6 +7,11 @@
   "description": "archangl's personal Claude Code plugin collection.",
   "plugins": [
     {
+      "name": "archangl-studio",
+      "source": "./plugins/archangl-studio",
+      "description": "Creative production skills for cinematic ad and video-gen workflows, starting with improve-shotlist (emotion-to-camera-language translation)."
+    },
+    {
       "name": "archangl-search",
       "source": "./plugins/archangl-search",
       "description": "Multi-source research orchestrator that routes through the Exa and Firecrawl provider skills. Depends on both (auto-installed from this marketplace)."
