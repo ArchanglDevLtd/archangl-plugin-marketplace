@@ -54,6 +54,18 @@ directly. It routes searching/reading through the provider plugins' own skills
 engine. If you touch that skill, preserve this indirection — don't reintroduce raw
 tool calls.
 
+**Provider transport is MCP, never CLI.** The two providers reach their engines over
+MCP through different routes, on purpose:
+
+- **`exa` bundles its MCP.** Its `plugin.json` declares a hosted HTTP MCP server
+  (`https://mcp.exa.ai/mcp`), which needs no API key, so the plugin is self-contained.
+- **`firecrawl-workflows` bundles no MCP** and must not. The owner's Firecrawl MCP
+  carries its **API key inside the server URL**, so bundling one would commit a secret.
+  The Firecrawl skills call `firecrawl_*` tools that resolve to the owner's
+  globally-configured Firecrawl MCP. Do **not** add an `mcpServers` block to this
+  plugin, and do not "fix" the snapshot's transport-agnostic "CLI or equivalent tool
+  surface" wording — in an MCP-equipped session that surface *is* the Firecrawl MCP.
+
 ### Vendored (snapshot) plugins — the rule that makes this repo work
 
 `exa` and `firecrawl-workflows` are **snapshots**, not live references. They were

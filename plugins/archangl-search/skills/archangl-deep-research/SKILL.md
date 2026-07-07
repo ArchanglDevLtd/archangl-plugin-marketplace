@@ -41,6 +41,14 @@ automatically as dependencies of `archangl-search`:
 
 Use **both** providers for coverage — their search models surface different sources.
 
+**Transport is MCP, not CLI.** Downstream, each provider skill reaches its engine over
+MCP — Exa through the MCP server bundled in the `exa` plugin, Firecrawl through the
+globally-configured Firecrawl MCP (the `firecrawl_*` tools; its API key is carried in
+that server, not in this repo). The vendored Firecrawl skills use transport-agnostic
+wording ("CLI or equivalent tool surface"); in this setup that surface is the Firecrawl
+MCP. If the `firecrawl_*` MCP tools are not available, report that the Firecrawl MCP is
+not configured — do not fall back to a CLI or a raw API key.
+
 ## Workflow
 
 ### Step 1: Understand the Goal
