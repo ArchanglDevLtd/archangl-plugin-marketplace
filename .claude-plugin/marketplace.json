@@ -1,0 +1,25 @@
+{
+  "name": "archangl",
+  "owner": {
+    "name": "archangl",
+    "email": "hello@archangl.ai"
+  },
+  "description": "archangl's personal Claude Code plugin collection.",
+  "plugins": [
+    {
+      "name": "archangl-search",
+      "source": "./plugins/archangl-search",
+      "description": "Multi-source deep research orchestrator that routes through the Exa and Firecrawl provider skills. Depends on both (auto-installed from this marketplace)."
+    },
+    {
+      "name": "exa",
+      "source": "./plugins/exa",
+      "description": "Vendored snapshot of the Exa plugin: hosted Exa MCP server plus the search and agent research skills."
+    },
+    {
+      "name": "firecrawl-workflows",
+      "source": "./plugins/firecrawl-workflows",
+      "description": "Vendored snapshot of Firecrawl Workflows: 16 outcome-focused Firecrawl skills for research, SEO, QA, knowledge bases, and more."
+    }
+  ]
+}
