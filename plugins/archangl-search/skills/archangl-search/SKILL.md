@@ -1,11 +1,11 @@
 ---
-name: archangl-deep-research
-description: Multi-source deep research using the Firecrawl and Exa provider skills. Searches the web, synthesizes findings, and delivers cited reports with source attribution. Use when the user wants thorough research on any topic with evidence and citations.
+name: archangl-search
+description: Multi-source research using the Firecrawl and Exa provider skills. Searches the web, synthesizes findings, and delivers cited reports with source attribution. Use when the user wants thorough research on any topic with evidence and citations.
 metadata:
   origin: ECC
 ---
 
-# Deep Research
+# Archangl Search
 
 > **Routes through provider skills.** This skill orchestrates; it does not call
 > Firecrawl/Exa MCP tools directly. It delegates searching and reading to the
@@ -22,7 +22,7 @@ Produce thorough, cited research reports from multiple web sources by orchestrat
 - Competitive analysis, technology evaluation, or market sizing
 - Due diligence on companies, investors, or technologies
 - Any question requiring synthesis from multiple sources
-- User says "research", "deep dive", "investigate", or "what's the current state of"
+- User says "research", "investigate", "dig into", or "what's the current state of"
 
 ## Provider Skills
 
@@ -86,7 +86,7 @@ let it run its own optimized search + scrape:
 ```
 
 Keep each per-sub-question dispatch scoped to a quick pass so the provider skills
-stay lightweight; reserve a full provider run for a sub-question that is itself deep.
+stay lightweight; reserve a full provider run for a sub-question that is itself substantial.
 
 **Search strategy:**
 - Use 2-3 different keyword variations per sub-question
@@ -95,10 +95,10 @@ stay lightweight; reserve a full provider run for a sub-question that is itself 
 - Prioritize: academic, official, reputable news > blogs > forums
 - Dedupe sources that both providers return
 
-### Step 4: Deep-Read Key Sources
+### Step 4: Read Key Sources in Full
 
 The provider skills scrape and read full sources as part of their own flow, so most
-deep reads already happen in Step 3. When you need a specific URL the skills did not
+full reads already happen in Step 3. When you need a specific URL the skills did not
 already read in full, route it back through the same provider skill (`/exa:search`
 and `/firecrawl-workflows:firecrawl-deep-research` both fetch and read full page
 content) rather than calling a scrape tool directly.
@@ -172,7 +172,7 @@ Each agent dispatches the provider skills, reads sources, and returns findings. 
 
 ```
 "Research the current state of nuclear fusion energy"
-"Deep dive into Rust vs Go for backend services in 2026"
+"Investigate Rust vs Go for backend services in 2026"
 "Research the best strategies for bootstrapping a SaaS business"
 "What's happening with the US housing market right now?"
 "Investigate the competitive landscape for AI code editors"
