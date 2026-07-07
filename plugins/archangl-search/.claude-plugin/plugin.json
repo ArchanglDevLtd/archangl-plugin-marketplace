@@ -1,10 +1,10 @@
 {
   "name": "archangl-search",
-  "description": "Multi-source deep research orchestrator. Plans a topic into sub-questions, delegates searching and reading to the Exa and Firecrawl provider skills (each optimized for its own engine), and synthesizes a cited report.",
+  "description": "Multi-source research orchestrator. Plans a topic into sub-questions, delegates searching and reading to the Exa and Firecrawl provider skills (each optimized for its own engine), and synthesizes a cited report.",
   "author": {
     "name": "archangl",
     "email": "hello@archangl.ai"
   },
-  "keywords": ["research", "deep-research", "search", "citations", "exa", "firecrawl"],
+  "keywords": ["research", "search", "citations", "exa", "firecrawl"],
   "dependencies": ["exa", "firecrawl-workflows"]
 }

@@ -39,15 +39,15 @@ plugins/
 
 ## Current contents
 
-The marketplace (`name: archangl`) lists three plugins:
+The marketplace (`name: archangl-plugin-marketplace`) lists three plugins:
 
 | Plugin | What it is | Notes |
 | --- | --- | --- |
-| `archangl-search` | Deep-research **orchestrator** — one skill, `archangl-deep-research` | **Depends on** `exa` + `firecrawl-workflows`; installing it auto-pulls both |
+| `archangl-search` | Research **orchestrator** — one skill, `archangl-search` (invoked as `/archangl-search:archangl-search`) | **Depends on** `exa` + `firecrawl-workflows`; installing it auto-pulls both |
 | `exa` | **Vendored snapshot** of the Exa plugin (hosted HTTP MCP + `search`/`agent` skills) | Frozen copy; see `plugins/exa/SNAPSHOT.md` |
 | `firecrawl-workflows` | **Vendored snapshot** of Firecrawl Workflows (16 skills) | Frozen copy; see `plugins/firecrawl-workflows/SNAPSHOT.md` |
 
-`archangl-deep-research` deliberately does **not** call Firecrawl/Exa MCP tools
+`archangl-search`'s skill deliberately does **not** call Firecrawl/Exa MCP tools
 directly. It routes searching/reading through the provider plugins' own skills
 (`/firecrawl-workflows:firecrawl-deep-research` and `/exa:search`, with
 `/exa:exa-agent` for async work), so each provider stays optimized for its own

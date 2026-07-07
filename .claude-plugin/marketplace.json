@@ -1,5 +1,5 @@
 {
-  "name": "archangl",
+  "name": "archangl-plugin-marketplace",
   "owner": {
     "name": "archangl",
     "email": "hello@archangl.ai"
@@ -9,7 +9,7 @@
     {
       "name": "archangl-search",
       "source": "./plugins/archangl-search",
-      "description": "Multi-source deep research orchestrator that routes through the Exa and Firecrawl provider skills. Depends on both (auto-installed from this marketplace)."
+      "description": "Multi-source research orchestrator that routes through the Exa and Firecrawl provider skills. Depends on both (auto-installed from this marketplace)."
     },
     {
       "name": "exa",
