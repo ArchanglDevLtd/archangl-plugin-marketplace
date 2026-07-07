@@ -37,6 +37,54 @@ plugins/
     .mcp.json               # optional: MCP server configs
 ```
 
+## Current contents
+
+The marketplace (`name: archangl`) lists three plugins:
+
+| Plugin | What it is | Notes |
+| --- | --- | --- |
+| `archangl-search` | Deep-research **orchestrator** — one skill, `archangl-deep-research` | **Depends on** `exa` + `firecrawl-workflows`; installing it auto-pulls both |
+| `exa` | **Vendored snapshot** of the Exa plugin (hosted HTTP MCP + `search`/`agent` skills) | Frozen copy; see `plugins/exa/SNAPSHOT.md` |
+| `firecrawl-workflows` | **Vendored snapshot** of Firecrawl Workflows (16 skills) | Frozen copy; see `plugins/firecrawl-workflows/SNAPSHOT.md` |
+
+`archangl-deep-research` deliberately does **not** call Firecrawl/Exa MCP tools
+directly. It routes searching/reading through the provider plugins' own skills
+(`/firecrawl-workflows:firecrawl-deep-research` and `/exa:search`, with
+`/exa:exa-agent` for async work), so each provider stays optimized for its own
+engine. If you touch that skill, preserve this indirection — don't reintroduce raw
+tool calls.
+
+**Provider transport is MCP, never CLI.** The two providers reach their engines over
+MCP through different routes, on purpose:
+
+- **`exa` bundles its MCP.** Its `plugin.json` declares a hosted HTTP MCP server
+  (`https://mcp.exa.ai/mcp`), which needs no API key, so the plugin is self-contained.
+- **`firecrawl-workflows` bundles no MCP** and must not. The owner's Firecrawl MCP
+  carries its **API key inside the server URL**, so bundling one would commit a secret.
+  The Firecrawl skills call `firecrawl_*` tools that resolve to the owner's
+  globally-configured Firecrawl MCP. Do **not** add an `mcpServers` block to this
+  plugin, and do not "fix" the snapshot's transport-agnostic "CLI or equivalent tool
+  surface" wording — in an MCP-equipped session that surface *is* the Firecrawl MCP.
+
+### Vendored (snapshot) plugins — the rule that makes this repo work
+
+`exa` and `firecrawl-workflows` are **snapshots**, not live references. They were
+copied from upstream at a pinned commit (recorded in each plugin's `SNAPSHOT.md`)
+because the upstream repos churn and we don't want that churn changing behavior
+under us. Consequences to respect:
+
+- **Never** convert these to a remote `source` (github/npm) or add the upstream
+  marketplace as a dependency source. The whole point is insulation from upstream.
+- The only edit made to each upstream `plugin.json` was **removing `version`** (so
+  this repo's commits drive updates). Keep other manifest fields verbatim.
+- To update a snapshot, do it **deliberately**: re-clone upstream, diff, copy in
+  changes, bump the commit/date in `SNAPSHOT.md`, commit. See each `SNAPSHOT.md`.
+- Because `archangl-search` depends on them by **bare name** (`["exa",
+  "firecrawl-workflows"]`, no version constraint), dependency resolution stays
+  within this marketplace and needs **no git tags**. Do not add version constraints
+  to those dependencies unless you also start tagging releases
+  (`{plugin-name}--v{version}`).
+
 ## Non-obvious rules (these cause silent failures if broken)
 
 1. **`.claude-plugin/` holds only the manifest.** `plugin.json` (and, at the repo root,
