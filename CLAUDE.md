@@ -44,7 +44,7 @@ The marketplace (`name: archangl-plugin-marketplace`) lists three plugins:
 | Plugin | What it is | Notes |
 | --- | --- | --- |
 | `archangl-search` | Research **orchestrator** — one skill, `archangl-search` (invoked as `/archangl-search:archangl-search`) | **Depends on** `exa` + `firecrawl-workflows`; installing it auto-pulls both |
-| `exa` | **Vendored snapshot** of the Exa plugin (hosted HTTP MCP + `search`/`agent` skills) | Frozen copy; see `plugins/exa/SNAPSHOT.md` |
+| `exa` | **Vendored snapshot** of the Exa plugin (`search`/`agent` skills; no bundled MCP server) | Frozen copy; see `plugins/exa/SNAPSHOT.md` |
 | `firecrawl-workflows` | **Vendored snapshot** of Firecrawl Workflows (16 skills) | Frozen copy; see `plugins/firecrawl-workflows/SNAPSHOT.md` |
 
 `archangl-search`'s skill deliberately does **not** call Firecrawl/Exa MCP tools
@@ -54,11 +54,17 @@ directly. It routes searching/reading through the provider plugins' own skills
 engine. If you touch that skill, preserve this indirection — don't reintroduce raw
 tool calls.
 
-**Provider transport is MCP, never CLI.** The two providers reach their engines over
-MCP through different routes, on purpose:
+**Provider transport is MCP, never CLI, and neither provider bundles its own MCP
+server.** Both providers' skills call tools by bare name (e.g. `web_search_exa`,
+`firecrawl_search`) and rely on the session already having a matching MCP server
+connected, rather than the plugin provisioning one:
 
-- **`exa` bundles its MCP.** Its `plugin.json` declares a hosted HTTP MCP server
-  (`https://mcp.exa.ai/mcp`), which needs no API key, so the plugin is self-contained.
+- **`exa` bundles no MCP.** Its `plugin.json` previously declared a hosted HTTP MCP
+  server (`https://mcp.exa.ai/mcp`); that block was removed because it collided with
+  sessions that already have their own Exa MCP server configured and OAuth'd —
+  running both produced unpredictable tool resolution. Do **not** re-add an
+  `mcpServers` block to this plugin. See `plugins/exa/SNAPSHOT.md` for the full
+  rationale.
 - **`firecrawl-workflows` bundles no MCP** and must not. The owner's Firecrawl MCP
   carries its **API key inside the server URL**, so bundling one would commit a secret.
   The Firecrawl skills call `firecrawl_*` tools that resolve to the owner's
