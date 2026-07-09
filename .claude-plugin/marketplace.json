@@ -25,6 +25,11 @@
       "name": "firecrawl-workflows",
       "source": "./plugins/firecrawl-workflows",
       "description": "Vendored snapshot of Firecrawl Workflows: 16 outcome-focused Firecrawl skills for research, SEO, QA, knowledge bases, and more."
+    },
+    {
+      "name": "archangl-pocock",
+      "source": "./plugins/archangl-pocock",
+      "description": "Vendored snapshot of Matt Pocock's skills (mattpocock/skills): 21 promoted engineering and productivity skills for real engineering — grilling, TDD, triage, code review, domain modeling, and more. Pinned verbatim, no upstream tracking."
     }
   ]
 }
