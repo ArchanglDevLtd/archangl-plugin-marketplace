@@ -10,11 +10,11 @@ marketplace.
 | | |
 | --- | --- |
 | Upstream repo | https://github.com/coreyhaines31/marketingskills |
-| Snapshot commit | `f04556d923e076a29564559101e5ca33698422f5` |
-| Commit subject | `Merge pull request #429 from coreyhaines31/development` |
-| Commit date | 2026-07-09 |
+| Snapshot commit | `52c269e2b3ac68eaaa74546696cfa53b467da4f5` |
+| Commit subject | `Merge pull request #437 from coreyhaines31/development` |
+| Commit date | 2026-07-10 |
 | Snapshot taken | 2026-07-10 |
-| Upstream version at snapshot | 2.8.6 |
+| Upstream version at snapshot | 2.8.7 |
 
 ## What was copied
 
