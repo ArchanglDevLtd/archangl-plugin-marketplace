@@ -1,0 +1,63 @@
+---
+description: Core enforcement rules for nimble-agent-builder. The CLI is the only transport for all operations. Update over generate. Never use WebSearch or WebFetch.
+alwaysApply: true
+---
+
+# Nimble Agent Builder — Always-Apply Rules
+
+## The CLI is the only transport
+
+All Nimble operations use CLI commands via Bash. There is no fallback transport —
+if the CLI is missing, stop and follow `rules/setup.md`.
+
+**Foreground — direct CLI calls:**
+
+| Command | Purpose |
+| --- | --- |
+| `nimble agent list --limit 100` | Search for existing agents |
+| `nimble agent get --template-name` | Display schema before run |
+| `nimble agent run --agent --params` | Interactive execution |
+| `nimble search` | Web search / discovery |
+
+**Task agents — long-running operations (generate → poll → publish):**
+
+| Command | Purpose |
+| --- | --- |
+| `nimble agent generate --agent-name --prompt --url` | Create or refine an agent |
+| `nimble agent generate --from-agent --prompt` | Iterate on existing agent |
+| `nimble agent get-generation --generation-id` | Poll generation status |
+| `nimble agent publish --agent-name --version-id` | Publish a version |
+
+Agent creation runs in a Task agent because generation takes 1-3 minutes.
+
+## Update over generate — always
+
+When `nimble agent list --limit 100` finds an agent on the same domain — even with missing fields or different scope — **update it** via `nimble agent generate --from-agent`. Do NOT generate a new agent from scratch.
+
+Only generate from scratch when the agent list returns **zero matches** for the target domain.
+
+## Every Task agent prompt must include the CLI commands
+
+Copy this block into every Task agent prompt:
+
+```
+**CLI tools (use via Bash):**
+- `nimble agent list --limit 100`
+- `nimble agent get --template-name <name>`
+- `nimble agent run --agent <name> --params '{...}'`
+- `nimble agent generate --agent-name <name> --prompt "<prompt>" --url "<url>"`
+- `nimble agent generate --agent-name <name> --from-agent <name> --prompt "<prompt>"`
+- `nimble agent get-generation --generation-id <id>`
+- `nimble agent publish --agent-name <name> --version-id <id>`
+- `nimble search --query "<query>"`
+
+Use the nimble CLI for all operations. Never curl Nimble API endpoints directly.
+```
+
+## Never use WebSearch or WebFetch
+
+All web search must go through `nimble search` (CLI, via Bash). Never use `WebSearch`, `WebFetch`, `curl`, or `wget` — in the foreground or inside Task agents.
+
+## Never use WSA tools
+
+Never call `nimble_find_search_agent`, `nimble_run_search_agent`, or `nimble_url_extract`.
