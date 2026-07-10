@@ -42,6 +42,11 @@
       "description": "Vendored snapshot of Corey Haines' marketingskills: 47 marketing skills for AI agents — conversion optimization, copywriting, SEO, paid ads, ad creative, and growth."
     },
     {
+      "name": "archangl-apify",
+      "source": "./plugins/archangl-apify",
+      "description": "Consolidated frozen snapshot of Apify's skills (apify/awesome-skills + apify/agent-skills): 10 vertical web-data workflow skills plus 5 Actor-development skills, all through the apify CLI (APIFY_TOKEN). CLI transport only."
+    },
+    {
       "name": "codex",
       "source": "./plugins/codex",
       "description": "Vendored snapshot of OpenAI's Codex plugin (openai/codex-plugin-cc, upstream v1.0.6): use Codex from Claude Code to review code or delegate tasks — commands, skills, agents, and hooks driving the codex CLI."
