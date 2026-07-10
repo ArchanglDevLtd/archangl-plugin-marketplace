@@ -37,15 +37,32 @@ plugins/
     .mcp.json               # optional: MCP server configs
 ```
 
+## STANDING RULE: this marketplace is completely self-contained
+
+A Claude Code session that adds this marketplace must rely **only on its connection
+to this repo** — it must never be rerouted to fetch any plugin's source from anywhere
+else. Concretely:
+
+- Every entry in `marketplace.json` must use a **local** `"source": "./plugins/<name>"`
+  path. Remote sources (`github`, `npm`, URLs) are **forbidden**, no exceptions.
+- Third-party plugins are brought in by **vendoring a snapshot** into `plugins/<name>/`
+  (full upstream tree at a pinned commit, documented in that plugin's `SNAPSHOT.md`) —
+  never by referencing the upstream repo or its marketplace.
+- Do not add plugin `dependencies` that resolve outside this marketplace.
+
 ## Current contents
 
-The marketplace (`name: archangl-plugin-marketplace`) lists three plugins:
+The marketplace (`name: archangl-plugin-marketplace`) lists seven plugins:
 
 | Plugin | What it is | Notes |
 | --- | --- | --- |
+| `archangl-studio` | Creative production skills (currently `improve-shotlist`) | First-party |
 | `archangl-search` | Research **orchestrator** — one skill, `archangl-search` (invoked as `/archangl-search:archangl-search`) | **Depends on** `exa` + `firecrawl-workflows`; installing it auto-pulls both |
 | `exa` | **Vendored snapshot** of the Exa plugin (`search`/`agent` skills; no bundled MCP server) | Frozen copy; see `plugins/exa/SNAPSHOT.md` |
 | `firecrawl-workflows` | **Vendored snapshot** of Firecrawl Workflows (16 skills) | Frozen copy; see `plugins/firecrawl-workflows/SNAPSHOT.md` |
+| `archangl-pocock` | **Vendored snapshot** of Matt Pocock's skills (21 engineering/productivity skills) | Frozen copy; see `plugins/archangl-pocock/SNAPSHOT.md` |
+| `apify` | **Vendored snapshot** of the official Apify plugin — **bundles the hosted Apify MCP server** (`mcp.apify.com`, OAuth), an `apify` subagent, and 5 Actor-development skills | Frozen copy; see `plugins/apify/SNAPSHOT.md`. The bundled MCP is deliberate (see below) |
+| `marketing-skills` | **Vendored snapshot** of Corey Haines' marketingskills (47 marketing skills) | Frozen copy; see `plugins/marketing-skills/SNAPSHOT.md` |
 
 `archangl-search`'s skill deliberately does **not** call Firecrawl/Exa MCP tools
 directly. It routes searching/reading through the provider plugins' own skills
@@ -72,12 +89,22 @@ connected, rather than the plugin provisioning one:
   plugin, and do not "fix" the snapshot's transport-agnostic "CLI or equivalent tool
   surface" wording — in an MCP-equipped session that surface *is* the Firecrawl MCP.
 
+**Exception: `apify` bundles its MCP server deliberately.** That plugin's whole
+purpose is that installing it connects the session to the official hosted Apify MCP
+(`https://mcp.apify.com/`). This is safe to commit because the URL carries no secret
+(auth is an OAuth flow handled by Claude Code), unlike Firecrawl. Do not remove its
+`.mcp.json` — but also don't take it as precedent for re-adding MCP blocks to `exa`
+or `firecrawl-workflows`, whose rationales above still hold. Caveat: a session that
+already has its own Apify MCP configured will run a duplicate connection; keep one.
+
 ### Vendored (snapshot) plugins — the rule that makes this repo work
 
-`exa` and `firecrawl-workflows` are **snapshots**, not live references. They were
+`exa`, `firecrawl-workflows`, `archangl-pocock`, `apify`, and `marketing-skills` are
+**snapshots**, not live references. They were
 copied from upstream at a pinned commit (recorded in each plugin's `SNAPSHOT.md`)
 because the upstream repos churn and we don't want that churn changing behavior
-under us. Consequences to respect:
+under us — and because the standing self-containment rule above forbids remote
+sources outright. Consequences to respect:
 
 - **Never** convert these to a remote `source` (github/npm) or add the upstream
   marketplace as a dependency source. The whole point is insulation from upstream.
@@ -165,6 +192,11 @@ claude plugin tag --push
   `description`, no `version`), add its capability dirs at the plugin root, then add an
   entry to `marketplace.json`'s `plugins` array with a `name` and
   `"source": "./plugins/<name>"`. Run `claude plugin validate .`.
+- **Third-party plugin:** never reference the upstream repo as a `source` (standing
+  self-containment rule). Vendor a snapshot: clone upstream, copy the full tree into
+  `plugins/<name>/` (minus `.git` and any upstream `.claude-plugin/marketplace.json`),
+  remove `version` from its `plugin.json`, write a `SNAPSHOT.md` recording the pinned
+  commit (mirror an existing one), then add the local-source marketplace entry.
 - **New skill in an existing plugin:** create
   `plugins/<plugin>/skills/<skill>/SKILL.md` with YAML frontmatter (`description` is
   what makes a skill auto-invocable; add `disable-model-invocation: true` for

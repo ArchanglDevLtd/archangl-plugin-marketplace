@@ -30,6 +30,16 @@
       "name": "archangl-pocock",
       "source": "./plugins/archangl-pocock",
       "description": "Vendored snapshot of Matt Pocock's skills (mattpocock/skills): 21 promoted engineering and productivity skills for real engineering — grilling, TDD, triage, code review, domain modeling, and more. Pinned verbatim, no upstream tracking."
+    },
+    {
+      "name": "apify",
+      "source": "./plugins/apify",
+      "description": "Vendored snapshot of the official Apify plugin (apify/apify-claude-code-plugin): hosted Apify MCP server (mcp.apify.com, OAuth), an apify routing subagent, and five Actor-development skills."
+    },
+    {
+      "name": "marketing-skills",
+      "source": "./plugins/marketing-skills",
+      "description": "Vendored snapshot of Corey Haines' marketingskills: 47 marketing skills for AI agents — conversion optimization, copywriting, SEO, paid ads, ad creative, and growth."
     }
   ]
 }
