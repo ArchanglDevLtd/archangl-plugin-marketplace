@@ -5,15 +5,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this repository is
 
 This repo is a **personal Claude Code plugin marketplace** — a single catalog that
-collects the skills, agents, hooks, and MCP servers the owner uses most and makes
+collects the skills, agents, commands, and hooks the owner uses most and makes
 them available across all of their Claude Code sessions (terminal, web, and cloud).
 
 The distribution model is deliberate and worth internalizing before making changes:
 
 - The **repository root is a marketplace** (`.claude-plugin/marketplace.json`).
 - The marketplace **lists plugins**; each plugin lives in `plugins/<name>/`.
-- Each **plugin bundles capabilities** — skills, slash commands, subagents, hooks,
-  and/or MCP servers.
+- Each **plugin bundles capabilities** — skills, slash commands, subagents, and/or
+  hooks. (Plugins *can* also bundle MCP servers, but this marketplace bans that —
+  see the standing no-MCP rule below.)
 
 There is no "plugin inside a plugin." The three-level hierarchy is
 **marketplace → plugins → capabilities**, and each level has one job. When the owner
@@ -34,68 +35,92 @@ plugins/
     commands/               # optional: flat .md slash commands (legacy; prefer skills)
     agents/                 # optional: subagent definitions
     hooks/hooks.json        # optional: event handlers
-    .mcp.json               # optional: MCP server configs
+                            # (.mcp.json is a plugin capability Claude Code supports,
+                            #  but it is BANNED here — standing no-MCP rule below)
 ```
+
+## STANDING RULE: this marketplace is completely self-contained
+
+A Claude Code session that adds this marketplace must rely **only on its connection
+to this repo** — it must never be rerouted to fetch any plugin's source from anywhere
+else. Concretely:
+
+- Every entry in `marketplace.json` must use a **local** `"source": "./plugins/<name>"`
+  path. Remote sources (`github`, `npm`, URLs) are **forbidden**, no exceptions.
+- Third-party plugins are brought in by **vendoring a snapshot** into `plugins/<name>/`
+  (full upstream tree at a pinned commit, documented in that plugin's `SNAPSHOT.md`) —
+  never by referencing the upstream repo or its marketplace.
+- Do not add plugin `dependencies` that resolve outside this marketplace.
+
+## STANDING RULE: no MCP, anywhere
+
+**No plugin in this marketplace bundles, configures, or instructs the use of MCP
+servers.** Provider transport is the provider's **CLI**, authenticated by
+environment variables the owner seeds into environments (never keys committed to
+this repo or pasted into conversations). Concretely:
+
+- No plugin ships a `.mcp.json` or an `mcpServers` block, ever.
+- No skill, agent, command, or reference file may tell an agent to call MCP tools,
+  connect connectors, or fall back to MCP when a CLI is missing — if the CLI or its
+  key is absent, skills stop and surface install/seeding guidance instead.
+- When vendoring a third-party plugin that ships MCP wiring, strip it as part of
+  the snapshot and itemize the strip in that plugin's `SNAPSHOT.md`
+  (see `plugins/nimble/SNAPSHOT.md` for the worked example).
+
+The web-data provider is **Nimble**: the `nimble` plugin's skills run the `nimble`
+CLI (`@nimble-way/nimble-cli`), which reads `NIMBLE_API_KEY` from the environment.
 
 ## Current contents
 
-The marketplace (`name: archangl-plugin-marketplace`) lists three plugins:
+The marketplace (`name: archangl-plugin-marketplace`) lists eight plugins:
 
 | Plugin | What it is | Notes |
 | --- | --- | --- |
-| `archangl-search` | Research **orchestrator** — one skill, `archangl-search` (invoked as `/archangl-search:archangl-search`) | **Depends on** `exa` + `firecrawl-workflows`; installing it auto-pulls both |
-| `exa` | **Vendored snapshot** of the Exa plugin (`search`/`agent` skills; no bundled MCP server) | Frozen copy; see `plugins/exa/SNAPSHOT.md` |
-| `firecrawl-workflows` | **Vendored snapshot** of Firecrawl Workflows (16 skills) | Frozen copy; see `plugins/firecrawl-workflows/SNAPSHOT.md` |
+| `archangl-studio` | Creative production suite — `brand-voice`, `content-engine`, `crosspost`, `lead-intelligence` (+ 4 subagents) | First-party. `lead-intelligence` routes web data through the `nimble` plugin's skills |
+| `archangl-search` | Research **orchestrator** — one skill, `archangl-search` (invoked as `/archangl-search:archangl-search`) | **Depends on** `nimble`; installing it auto-pulls it |
+| `archangl-pocock` | **Vendored snapshot** of Matt Pocock's skills (21 engineering/productivity skills) | Frozen copy; see `plugins/archangl-pocock/SNAPSHOT.md` |
+| `nimble` | **Vendored snapshot** of Nimble's agent-skills — web search/extract/map/crawl plus business-research, SEO, marketing, and productivity skills, two research agents, and a `/nimble:search` command. **CLI transport only** | Frozen copy with the MCP wiring stripped; see `plugins/nimble/SNAPSHOT.md` |
+| `context7` | **Vendored snapshot** of two Context7 (Upstash) documentation skills — `context7-cli` and `find-docs`, driving the `ctx7` CLI. **CLI transport only** | Assembled from an owner-provided archive, MCP mode stripped; see `plugins/context7/SNAPSHOT.md` |
+| `qmd` | **Vendored snapshot** of Tobi Lütke's qmd — local markdown search (BM25 + vector) via the `qmd` CLI, one `qmd` skill (plus upstream's `release` repo-tooling skill). **CLI transport only** | Frozen copy with the MCP transport stripped; see `plugins/qmd/SNAPSHOT.md` |
+| `marketing-skills` | **Vendored snapshot** of Corey Haines' marketingskills (47 marketing skills) | Frozen copy; see `plugins/marketing-skills/SNAPSHOT.md` |
+| `codex` | **Vendored snapshot** of OpenAI's Codex plugin — 8 commands, 3 skills, `codex-rescue` agent, and hooks driving the `codex` CLI | Frozen copy (replaced main's live git-subdir source at merge time); see `plugins/codex/SNAPSHOT.md` |
 
-`archangl-search`'s skill deliberately does **not** call Firecrawl/Exa MCP tools
-directly. It routes searching/reading through the provider plugins' own skills
-(`/firecrawl-workflows:firecrawl-deep-research` and `/exa:search`, with
-`/exa:exa-agent` for async work), so each provider stays optimized for its own
-engine. If you touch that skill, preserve this indirection — don't reintroduce raw
-tool calls.
-
-**Provider transport is MCP, never CLI, and neither provider bundles its own MCP
-server.** Both providers' skills call tools by bare name (e.g. `web_search_exa`,
-`firecrawl_search`) and rely on the session already having a matching MCP server
-connected, rather than the plugin provisioning one:
-
-- **`exa` bundles no MCP.** Its `plugin.json` previously declared a hosted HTTP MCP
-  server (`https://mcp.exa.ai/mcp`); that block was removed because it collided with
-  sessions that already have their own Exa MCP server configured and OAuth'd —
-  running both produced unpredictable tool resolution. Do **not** re-add an
-  `mcpServers` block to this plugin. See `plugins/exa/SNAPSHOT.md` for the full
-  rationale.
-- **`firecrawl-workflows` bundles no MCP** and must not. The owner's Firecrawl MCP
-  carries its **API key inside the server URL**, so bundling one would commit a secret.
-  The Firecrawl skills call `firecrawl_*` tools that resolve to the owner's
-  globally-configured Firecrawl MCP. Do **not** add an `mcpServers` block to this
-  plugin, and do not "fix" the snapshot's transport-agnostic "CLI or equivalent tool
-  surface" wording — in an MCP-equipped session that surface *is* the Firecrawl MCP.
+`archangl-search`'s skill deliberately does **not** run `nimble` CLI commands
+directly. It routes searching/reading through the nimble plugin's own skills
+(`/nimble:nimble-web-expert` by default, the vertical skills like
+`/nimble:company-deep-dive` or `/nimble:seo-intel` when a sub-question matches,
+and the `/nimble:search` command for quick lookups), so the provider stays
+optimized for its own engine. If you touch that skill, preserve this indirection —
+don't reintroduce raw CLI calls.
 
 ### Vendored (snapshot) plugins — the rule that makes this repo work
 
-`exa` and `firecrawl-workflows` are **snapshots**, not live references. They were
+`archangl-pocock`, `nimble`, and `marketing-skills` are **snapshots**, not live
+references. They were
 copied from upstream at a pinned commit (recorded in each plugin's `SNAPSHOT.md`)
 because the upstream repos churn and we don't want that churn changing behavior
-under us. Consequences to respect:
+under us — and because the standing self-containment rule above forbids remote
+sources outright. Consequences to respect:
 
 - **Never** convert these to a remote `source` (github/npm) or add the upstream
   marketplace as a dependency source. The whole point is insulation from upstream.
-- The only edit made to each upstream `plugin.json` was **removing `version`** (so
-  this repo's commits drive updates). Keep other manifest fields verbatim.
+- Every upstream `plugin.json` had **`version` removed** (so this repo's commits
+  drive updates). Any further manifest or content edits (e.g. `nimble`'s MCP strip)
+  are itemized in that plugin's `SNAPSHOT.md`; keep everything else verbatim.
 - To update a snapshot, do it **deliberately**: re-clone upstream, diff, copy in
-  changes, bump the commit/date in `SNAPSHOT.md`, commit. See each `SNAPSHOT.md`.
-- Because `archangl-search` depends on them by **bare name** (`["exa",
-  "firecrawl-workflows"]`, no version constraint), dependency resolution stays
+  changes, re-apply the itemized edits, bump the commit/date in `SNAPSHOT.md`,
+  commit. See each `SNAPSHOT.md`.
+- Because `archangl-search` depends on `nimble` by **bare name** (`["nimble"]`,
+  no version constraint), dependency resolution stays
   within this marketplace and needs **no git tags**. Do not add version constraints
-  to those dependencies unless you also start tagging releases
+  to that dependency unless you also start tagging releases
   (`{plugin-name}--v{version}`).
 
 ## Non-obvious rules (these cause silent failures if broken)
 
 1. **`.claude-plugin/` holds only the manifest.** `plugin.json` (and, at the repo root,
    `marketplace.json`) are the *only* things inside `.claude-plugin/`. Every capability
-   directory — `skills/`, `commands/`, `agents/`, `hooks/`, `.mcp.json` — lives at the
+   directory — `skills/`, `commands/`, `agents/`, `hooks/` — lives at the
    **plugin root**, a level *above* `.claude-plugin/`. Putting them inside
    `.claude-plugin/` makes them invisible.
 
@@ -165,6 +190,11 @@ claude plugin tag --push
   `description`, no `version`), add its capability dirs at the plugin root, then add an
   entry to `marketplace.json`'s `plugins` array with a `name` and
   `"source": "./plugins/<name>"`. Run `claude plugin validate .`.
+- **Third-party plugin:** never reference the upstream repo as a `source` (standing
+  self-containment rule). Vendor a snapshot: clone upstream, copy the full tree into
+  `plugins/<name>/` (minus `.git` and any upstream `.claude-plugin/marketplace.json`),
+  remove `version` from its `plugin.json`, write a `SNAPSHOT.md` recording the pinned
+  commit (mirror an existing one), then add the local-source marketplace entry.
 - **New skill in an existing plugin:** create
   `plugins/<plugin>/skills/<skill>/SKILL.md` with YAML frontmatter (`description` is
   what makes a skill auto-invocable; add `disable-model-invocation: true` for

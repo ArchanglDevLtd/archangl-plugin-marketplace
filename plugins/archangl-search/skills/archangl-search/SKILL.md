@@ -1,20 +1,20 @@
 ---
 name: archangl-search
-description: Multi-source research using the Firecrawl and Exa provider skills. Searches the web, synthesizes findings, and delivers cited reports with source attribution. Use when the user wants thorough research on any topic with evidence and citations.
+description: Multi-source research using the Nimble provider skills. Searches the web, synthesizes findings, and delivers cited reports with source attribution. Use when the user wants thorough research on any topic with evidence and citations.
 metadata:
   origin: ECC
 ---
 
 # Archangl Search
 
-> **Routes through provider skills.** This skill orchestrates; it does not call
-> Firecrawl/Exa MCP tools directly. It delegates searching and reading to the
-> `firecrawl-workflows` and `exa` plugins — installed automatically as dependencies
-> of `archangl-search` — so each provider's own skill stays optimized as tool names,
-> quotas, and result shapes drift. Verify those two plugins are installed before
+> **Routes through provider skills.** This skill orchestrates; it does not run
+> raw `nimble` commands or call the Nimble API directly. It delegates searching
+> and reading to the `nimble` plugin — installed automatically as a dependency
+> of `archangl-search` — so the provider's own skills stay optimized as flags,
+> quotas, and result shapes drift. Verify the `nimble` plugin is installed before
 > promising coverage or quoting live source counts.
 
-Produce thorough, cited research reports from multiple web sources by orchestrating the Firecrawl and Exa provider skills.
+Produce thorough, cited research reports from multiple web sources by orchestrating the Nimble provider skills.
 
 ## When to Activate
 
@@ -26,28 +26,31 @@ Produce thorough, cited research reports from multiple web sources by orchestrat
 
 ## Provider Skills
 
-The actual searching and reading is done **through the provider plugins' own skills**,
-each tuned for its engine. Do not call raw provider MCP tools from here — invoke the
-skills so each stays optimized for its own behavior. Both plugins are pulled in
-automatically as dependencies of `archangl-search`:
+The actual searching and reading is done **through the nimble plugin's own skills**,
+each tuned for the Nimble engine. Do not run raw `nimble` commands or call the Nimble
+API from here — invoke the skills so each stays optimized for its own behavior. The
+`nimble` plugin is pulled in automatically as a dependency of `archangl-search`:
 
-- **Firecrawl** → `/firecrawl-workflows:firecrawl-deep-research` — Firecrawl's own
-  cited-report research skill (search + scrape + synthesis, optimized for Firecrawl).
-  Other Firecrawl skills (`firecrawl-market-research`, `firecrawl-competitive-intel`,
-  `firecrawl-research-papers`, …) are available when a sub-question calls for one.
-- **Exa** → `/exa:search` — the Exa Research Orchestrator (semantic search + parallel
-  subagents, optimized for Exa). For async list-building / enrichment sub-questions,
-  use `/exa:exa-agent` instead.
+- **General search / fetch / crawl** → `/nimble:nimble-web-expert` — Nimble's core
+  web-data skill (search with 8 focus modes, URL extraction, site mapping, bulk
+  crawling). This is the default dispatch target for research sub-questions.
+- **Domain sub-questions** → Nimble's specialist skills when a sub-question matches
+  their vertical: `/nimble:company-deep-dive`, `/nimble:competitor-intel`, and
+  `/nimble:market-finder` (business research), `/nimble:seo-intel` (SEO), or the
+  marketing/productivity skills (`/nimble:brand-mention-monitor`,
+  `/nimble:meeting-prep`, …).
+- **Quick single lookup** → the `/nimble:search <query>` command when a sub-question
+  needs one fast search rather than a full skill dispatch.
 
-Use **both** providers for coverage — their search models surface different sources.
+Vary focus modes (general, news, academic, social) across dispatches for coverage —
+different modes surface different sources.
 
-**Transport is MCP, not CLI.** Downstream, each provider skill reaches its engine over
-MCP — Exa through the MCP server bundled in the `exa` plugin, Firecrawl through the
-globally-configured Firecrawl MCP (the `firecrawl_*` tools; its API key is carried in
-that server, not in this repo). The vendored Firecrawl skills use transport-agnostic
-wording ("CLI or equivalent tool surface"); in this setup that surface is the Firecrawl
-MCP. If the `firecrawl_*` MCP tools are not available, report that the Firecrawl MCP is
-not configured — do not fall back to a CLI or a raw API key.
+**Transport is the Nimble CLI, nothing else.** Downstream, every nimble skill reaches
+its engine through the `nimble` CLI, authenticated by the `NIMBLE_API_KEY`
+environment variable seeded into the environment (the key never lives in this repo
+and is never pasted into a conversation). If the CLI or key is missing, report that
+Nimble isn't ready — the nimble skills' own preflight prints the install/key
+guidance — do not fall back to WebSearch, WebFetch, curl, or a raw API key.
 
 ## Workflow
 
@@ -71,37 +74,38 @@ Break the topic into 3-5 research sub-questions. Example:
 
 ### Step 3: Execute Multi-Source Search
 
-For EACH sub-question, dispatch the provider skills rather than calling MCP tools
-directly. Hand each skill the sub-question plus any angle/recency constraints, and
-let it run its own optimized search + scrape:
+For EACH sub-question, dispatch the nimble skills rather than running `nimble`
+commands directly. Hand each skill the sub-question plus any angle/recency
+constraints, and let it run its own optimized search + read:
 
-**Via Firecrawl:**
+**Default dispatch:**
 ```
-/firecrawl-workflows:firecrawl-deep-research  — scope it to a short/quick pass per sub-question
+/nimble:nimble-web-expert  — the sub-question; state recency/entity constraints and the focus mode in the prompt
 ```
 
-**Via Exa:**
+**When a sub-question matches a vertical:**
 ```
-/exa:search  — same sub-question; state recency/entity constraints in the prompt
+/nimble:company-deep-dive | /nimble:competitor-intel | /nimble:market-finder | /nimble:seo-intel | …
 ```
 
 Keep each per-sub-question dispatch scoped to a quick pass so the provider skills
-stay lightweight; reserve a full provider run for a sub-question that is itself substantial.
+stay lightweight; reserve a full specialist-skill run for a sub-question that is
+itself substantial.
 
 **Search strategy:**
 - Use 2-3 different keyword variations per sub-question
-- Mix general and news-focused queries
+- Mix focus modes: general and news for most topics; academic or social when the angle calls for it
 - Aim for 15-30 unique sources total
 - Prioritize: academic, official, reputable news > blogs > forums
-- Dedupe sources that both providers return
+- Dedupe sources that multiple dispatches return
 
 ### Step 4: Read Key Sources in Full
 
-The provider skills scrape and read full sources as part of their own flow, so most
+The provider skills extract and read full sources as part of their own flow, so most
 full reads already happen in Step 3. When you need a specific URL the skills did not
-already read in full, route it back through the same provider skill (`/exa:search`
-and `/firecrawl-workflows:firecrawl-deep-research` both fetch and read full page
-content) rather than calling a scrape tool directly.
+already read in full, route it back through `/nimble:nimble-web-expert` (it fetches
+and reads full page content from any URL) rather than running an extract command
+directly.
 
 Read 3-5 key sources in full for depth. Do not rely only on search snippets.
 

@@ -1,0 +1,9 @@
+{
+  "name": "context7",
+  "description": "Context7 documentation skills — fetch up-to-date library docs and manage AI coding skills through the ctx7 CLI (context7-cli and find-docs skills). CLI transport only.",
+  "author": {
+    "name": "archangl",
+    "email": "hello@archangl.ai"
+  },
+  "keywords": ["context7", "documentation", "docs", "cli"]
+}
