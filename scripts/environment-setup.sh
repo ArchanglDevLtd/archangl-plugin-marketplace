@@ -21,6 +21,7 @@ MARKETPLACE_URL="https://github.com/ArchanglDevLtd/archangl-plugin-marketplace"
 #      ctx7   → context7 plugin
 #      qmd    → qmd plugin
 #      codex  → codex plugin
+#      apify  → archangl-apify plugin
 install_cli() { # <binary> <npm package>
   if command -v "$1" >/dev/null 2>&1; then
     log "$1 present ($("$1" --version 2>/dev/null | head -1))"
@@ -33,10 +34,12 @@ install_cli nimble "@nimble-way/nimble-cli"
 install_cli ctx7   "ctx7@latest"
 install_cli qmd    "@tobilu/qmd"
 install_cli codex  "@openai/codex"
+install_cli apify  "apify-cli"
 
 # 2) Key sanity — warn, never fail. Keys are seeded into the environment,
 #    never committed or pasted into sessions.
 [ -n "${NIMBLE_API_KEY:-}" ] || log "WARN: NIMBLE_API_KEY not seeded — nimble skills stop at preflight"
+[ -n "${APIFY_TOKEN:-}" ]     || log "WARN: APIFY_TOKEN not seeded — archangl-apify skills stop at preflight"
 
 # 3) Register the marketplace (idempotent). Claude clones it using the
 #    session's git credentials, so private repos work too.
