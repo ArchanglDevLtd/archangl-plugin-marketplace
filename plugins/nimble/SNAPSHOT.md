@@ -48,7 +48,9 @@ configures, or instructs the use of MCP servers.
 Itemized:
 
 - **`plugin.json`**: `version` removed (was `0.25.0`; repo rule 3 — this repo's
-  commits drive updates) and the `"mcp"` keyword removed. All other fields verbatim.
+  commits drive updates) and the `"mcp"` keyword removed. All other fields carry
+  the same values (the file was re-serialized, so array formatting differs from
+  upstream's).
 - **`.mcp.json` / `mcp.json` / `.cursor-plugin/`**: excluded outright (above).
 - **`_shared/nimble-playbook.md`**: the CLI-or-MCP "Transport selection" decision
   table collapsed to a CLI-only preflight (`nimble --version` + `NIMBLE_API_KEY`);
@@ -60,7 +62,12 @@ Itemized:
 - **`_shared/memory-and-distribution.md`**: report distribution reworded from "MCP
   connectors" to session integrations (Notion/Slack tools), no behavior change.
 - **Per-skill `references/` copies of the above**: regenerated with upstream's own
-  `scripts/sync-shared.sh`, so they match the edited masters byte-for-byte.
+  `scripts/sync-shared.sh`, so they match the edited masters byte-for-byte. Side
+  effect: the sync also created the three shared-reference copies under
+  `skills/data-platforms/nimble-databricks-data-products/references/`, which
+  upstream had never synced into that skill.
+- **`.env.example`**: the two commented "Local MCP server URL" lines
+  (`NIMBLE_MCP_LOCAL_URL`) were removed.
 - **All business/vertical `SKILL.md` files and `seo-intel` workflow references**:
   the boilerplate "pick CLI or MCP at session start" preflight line now reads
   CLI-only; the "MCP path: not yet supported" trailer removed; `meeting-prep`'s
@@ -97,6 +104,6 @@ Itemized:
 3. Copy upstream changes in, re-apply the exclusions and the MCP strip (edit
    `_shared/` masters first, then run `scripts/sync-shared.sh`).
 4. Verify: no `.mcp.json`/`mcp.json`/`.cursor-plugin`, and a case-insensitive
-   grep for "mcp" over the tree hits only `CHANGELOG.md`.
+   grep for "mcp" over the tree hits only `CHANGELOG.md` and this file.
 5. Update the commit/date table above (including the upstream version row) and
    commit.
