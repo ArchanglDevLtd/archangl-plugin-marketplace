@@ -30,6 +30,15 @@
       "name": "archangl-pocock",
       "source": "./plugins/archangl-pocock",
       "description": "Vendored snapshot of Matt Pocock's skills (mattpocock/skills): 21 promoted engineering and productivity skills for real engineering — grilling, TDD, triage, code review, domain modeling, and more. Pinned verbatim, no upstream tracking."
+    },
+    {
+      "name": "codex",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/openai/codex-plugin-cc",
+        "path": "plugins/codex"
+      },
+      "description": "OpenAI's Codex plugin (v1.0.6 at add time): use Codex from Claude Code to review code or delegate tasks. Sourced live from openai/codex-plugin-cc — not vendored locally; tracks upstream."
     }
   ]
 }
