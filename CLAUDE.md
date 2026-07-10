@@ -72,7 +72,7 @@ CLI (`@nimble-way/nimble-cli`), which reads `NIMBLE_API_KEY` from the environmen
 
 ## Current contents
 
-The marketplace (`name: archangl-plugin-marketplace`) lists seven plugins:
+The marketplace (`name: archangl-plugin-marketplace`) lists eight plugins:
 
 | Plugin | What it is | Notes |
 | --- | --- | --- |
@@ -83,6 +83,7 @@ The marketplace (`name: archangl-plugin-marketplace`) lists seven plugins:
 | `context7` | **Vendored snapshot** of two Context7 (Upstash) documentation skills — `context7-cli` and `find-docs`, driving the `ctx7` CLI. **CLI transport only** | Assembled from an owner-provided archive, MCP mode stripped; see `plugins/context7/SNAPSHOT.md` |
 | `qmd` | **Vendored snapshot** of Tobi Lütke's qmd — local markdown search (BM25 + vector) via the `qmd` CLI, one `qmd` skill (plus upstream's `release` repo-tooling skill). **CLI transport only** | Frozen copy with the MCP transport stripped; see `plugins/qmd/SNAPSHOT.md` |
 | `marketing-skills` | **Vendored snapshot** of Corey Haines' marketingskills (47 marketing skills) | Frozen copy; see `plugins/marketing-skills/SNAPSHOT.md` |
+| `codex` | **Vendored snapshot** of OpenAI's Codex plugin — 8 commands, 3 skills, `codex-rescue` agent, and hooks driving the `codex` CLI | Frozen copy (replaced main's live git-subdir source at merge time); see `plugins/codex/SNAPSHOT.md` |
 
 `archangl-search`'s skill deliberately does **not** run `nimble` CLI commands
 directly. It routes searching/reading through the nimble plugin's own skills
