@@ -17,7 +17,7 @@ marketplace.
 
 ## What was copied
 
-The entire upstream repository tree verbatim: `.mcp.json`, `agents/apify.md` (the
+The entire upstream repository tree verbatim: `agents/apify.md` (the
 routing subagent), the five skills (`apify-actor-development`, `apify-actorization`,
 `apify-generate-output-schema`, `apify-sdk-integration`, `apify-ultimate-scraper`),
 `README.md`, `CHANGELOG.md`, and `LICENSE` (Apache-2.0, © Apify — retained for
@@ -34,25 +34,34 @@ Excluded during the copy:
 
 - **`plugin.json` `version` (was `1.0.0`) was removed** so this repo's commits drive
   updates (repo rule 3). Every other manifest field is verbatim.
+- **Upstream's `.mcp.json` was removed** (it pointed at the hosted Apify MCP server,
+  `https://mcp.apify.com/`). See below.
 
-## This plugin DOES bundle an MCP server — deliberately
+## This plugin bundles NO MCP server — same rule as `exa`
 
-Unlike `exa` and `firecrawl-workflows`, this plugin ships `.mcp.json` pointing at the
-**official hosted Apify MCP server** (`https://mcp.apify.com/`, streamable HTTP).
-That is the plugin's entire purpose: installing it connects the session to Apify.
-It is safe to commit because the URL carries **no secret** — authentication is an
-OAuth flow handled by Claude Code on first use (contrast with Firecrawl, whose
-server URL embeds an API key and therefore must never be bundled).
+Upstream ships `.mcp.json` connecting the session to the official hosted Apify MCP.
+That block was **deliberately removed** from this snapshot: the owner already runs a
+**session-scoped Apify MCP server**, and bundling a second connection to the same
+service duplicates the toolset and produces unpredictable tool resolution — the exact
+failure mode that led to stripping the MCP block from the `exa` plugin (see
+`plugins/exa/SNAPSHOT.md`).
 
-Caveat: if a session already has its own Apify MCP server configured at user or
-project scope, enabling this plugin runs a second connection to the same service
-and duplicates its toolset. Keep exactly one enabled.
+Do **not** re-add `.mcp.json` (or an `mcpServers` block in `plugin.json`) to this
+plugin. The `apify` agent and skills call Apify MCP tools that resolve to the
+owner's session-scoped server. Upstream's `README.md` still describes the bundled
+`.mcp.json` — that wording is kept as part of the snapshot; in the owner's sessions
+the MCP surface it describes is provided by the session-scoped server instead.
+
+(The removal is not a secrets issue — the URL carries no key, auth is OAuth — purely
+a duplicate-connection issue. If the session-scoped server ever goes away, restoring
+upstream's `.mcp.json` verbatim is the correct way to re-enable the connection.)
 
 ## How to update this snapshot
 
 1. `git clone https://github.com/apify/apify-claude-code-plugin` somewhere outside
    this repo and note `git rev-parse HEAD`.
 2. Diff against `plugins/apify/` (ignoring `.git`, `.claude-plugin/marketplace.json`,
-   and the removed `version` field).
-3. Copy changes in, keeping the exclusions and the `version` removal.
+   the removed `.mcp.json`, and the removed `version` field).
+3. Copy changes in, keeping the exclusions, the `version` removal, and the
+   `.mcp.json` removal.
 4. Update the commit/date table above and commit.

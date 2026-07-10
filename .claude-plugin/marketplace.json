@@ -34,7 +34,7 @@
     {
       "name": "apify",
       "source": "./plugins/apify",
-      "description": "Vendored snapshot of the official Apify plugin (apify/apify-claude-code-plugin): hosted Apify MCP server (mcp.apify.com, OAuth), an apify routing subagent, and five Actor-development skills."
+      "description": "Vendored snapshot of the official Apify plugin (apify/apify-claude-code-plugin): an apify routing subagent and five Actor-development skills. No bundled MCP server — Apify tools resolve to the session-scoped Apify MCP."
     },
     {
       "name": "marketing-skills",

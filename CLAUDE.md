@@ -61,7 +61,7 @@ The marketplace (`name: archangl-plugin-marketplace`) lists seven plugins:
 | `exa` | **Vendored snapshot** of the Exa plugin (`search`/`agent` skills; no bundled MCP server) | Frozen copy; see `plugins/exa/SNAPSHOT.md` |
 | `firecrawl-workflows` | **Vendored snapshot** of Firecrawl Workflows (16 skills) | Frozen copy; see `plugins/firecrawl-workflows/SNAPSHOT.md` |
 | `archangl-pocock` | **Vendored snapshot** of Matt Pocock's skills (21 engineering/productivity skills) | Frozen copy; see `plugins/archangl-pocock/SNAPSHOT.md` |
-| `apify` | **Vendored snapshot** of the official Apify plugin — **bundles the hosted Apify MCP server** (`mcp.apify.com`, OAuth), an `apify` subagent, and 5 Actor-development skills | Frozen copy; see `plugins/apify/SNAPSHOT.md`. The bundled MCP is deliberate (see below) |
+| `apify` | **Vendored snapshot** of the official Apify plugin — an `apify` routing subagent and 5 Actor-development skills (**no bundled MCP server**) | Frozen copy; see `plugins/apify/SNAPSHOT.md`. Upstream's `.mcp.json` was removed (see below) |
 | `marketing-skills` | **Vendored snapshot** of Corey Haines' marketingskills (47 marketing skills) | Frozen copy; see `plugins/marketing-skills/SNAPSHOT.md` |
 
 `archangl-search`'s skill deliberately does **not** call Firecrawl/Exa MCP tools
@@ -89,13 +89,14 @@ connected, rather than the plugin provisioning one:
   plugin, and do not "fix" the snapshot's transport-agnostic "CLI or equivalent tool
   surface" wording — in an MCP-equipped session that surface *is* the Firecrawl MCP.
 
-**Exception: `apify` bundles its MCP server deliberately.** That plugin's whole
-purpose is that installing it connects the session to the official hosted Apify MCP
-(`https://mcp.apify.com/`). This is safe to commit because the URL carries no secret
-(auth is an OAuth flow handled by Claude Code), unlike Firecrawl. Do not remove its
-`.mcp.json` — but also don't take it as precedent for re-adding MCP blocks to `exa`
-or `firecrawl-workflows`, whose rationales above still hold. Caveat: a session that
-already has its own Apify MCP configured will run a duplicate connection; keep one.
+- **`apify` bundles no MCP either.** Upstream ships a `.mcp.json` pointing at the
+  hosted Apify MCP server (`https://mcp.apify.com/`), but it was removed from this
+  snapshot because the owner already runs a **session-scoped Apify MCP server** —
+  bundling a second connection duplicates the toolset, the same failure mode as
+  `exa`. Do **not** re-add `.mcp.json` or an `mcpServers` block to this plugin; the
+  `apify` agent and skills resolve to the session-scoped server. (Unlike Firecrawl
+  this is not a secrets issue — the URL carries no key — purely duplication. See
+  `plugins/apify/SNAPSHOT.md`.)
 
 ### Vendored (snapshot) plugins — the rule that makes this repo work
 
