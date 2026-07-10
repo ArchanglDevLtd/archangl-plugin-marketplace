@@ -16,7 +16,7 @@ Search and paginate through available agents.
 
 ```bash
 nimble agent list --limit 100
-nimble agent list --limit 100 --query "amazon"
+nimble agent list --limit 100 --search "amazon"
 ```
 
 ### Options
@@ -24,8 +24,8 @@ nimble agent list --limit 100 --query "amazon"
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--limit <n>` | 50 | Max results. Maximum 100. Always use `--limit 100` for discovery. |
-| `--query <term>` | — | Filter by keyword. Use short terms, not full sentences. |
-| `--skip <n>` | 0 | Offset for pagination. |
+| `--search <term>` | — | Filter by keyword. Use short terms, not full sentences. |
+| `--offset <n>` | 0 | Offset for pagination. |
 
 ### Output
 
@@ -119,6 +119,28 @@ nimble search --query "target domain keywords" --max-results 5
 ### Output
 
 Structured results with titles, URLs, and content snippets.
+
+---
+
+## Operation name glossary
+
+The lifecycle docs (`generate-update-and-publish.md`, `error-recovery.md`, and
+SKILL.md) refer to agent-platform operations by these bare names. Each one is
+executed with the CLI command shown — there is no other transport:
+
+| Operation name | CLI command |
+|---|---|
+| `nimble_agents_generate` | `nimble agent generate --agent-name <name> --prompt "<prompt>" --url "<url>"` |
+| `nimble_agents_update_from_agent` | `nimble agent generate --from-agent <name> --prompt "<prompt>"` (call once to enter update mode) |
+| `nimble_agents_update_session` | `nimble agent generate --from-agent <name> --prompt "<follow-up>"` (continue the same refinement session) |
+| `nimble_agents_status` | `nimble agent get-generation --generation-id <id>` (read-only poll) |
+| `nimble_agents_publish` | `nimble agent publish --agent-name <name> --version-id <id>` |
+
+Session semantics on the CLI: `generate` returns a generation `id` — poll it
+with `get-generation --generation-id`. Where the lifecycle docs say
+"session_id", use that generation id. If a documented subcommand is missing
+from your installed CLI version (`nimble agent --help` lists what exists),
+stop and report the version mismatch rather than improvising an endpoint.
 
 ---
 

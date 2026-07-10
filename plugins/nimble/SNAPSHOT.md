@@ -80,6 +80,18 @@ Itemized:
   `rules/setup.md` and `rules/nimble-agent-builder.mdc` rewritten CLI-only; the
   "MCP tools" section of `references/agent-api-reference.md` deleted; MCP fallback
   tables in `references/generate-update-and-publish.md` removed.
+- **`references/agent-api-reference.md` — "Operation name glossary" added
+  (post-strip repair).** The lifecycle docs (`generate-update-and-publish.md`,
+  `error-recovery.md`, SKILL.md) use bare operation names
+  (`nimble_agents_generate`, `nimble_agents_update_from_agent`,
+  `nimble_agents_update_session`, `nimble_agents_status`,
+  `nimble_agents_publish`) that upstream defined only in the deleted MCP
+  mapping tables. A differential diagnosis (2026-07-10) found ~30 imperative
+  uses left dangling, so a transport-neutral glossary mapping each name to its
+  CLI command (taken from upstream's own "CLI equivalent" lines) was restored
+  in its place. Also fixed in that file: `nimble agent list` flags corrected to
+  what CLI v0.14.0 actually accepts (`--query`→`--search`, `--skip`→`--offset`
+  — upstream documented flags the CLI rejects; verified by live probes).
 - **`marketing/*/references/sources.md`**: transport-agnostic CLI/MCP wording
   collapsed to CLI-only.
 - **`launch-monitor` sample data**: illustrative example URLs and a DOM id in
@@ -104,6 +116,12 @@ Itemized:
 3. Copy upstream changes in, re-apply the exclusions and the MCP strip (edit
    `_shared/` masters first, then run `scripts/sync-shared.sh`).
 4. Verify: no `.mcp.json`/`mcp.json`/`.cursor-plugin`, and a case-insensitive
-   grep for "mcp" over the tree hits only `CHANGELOG.md` and this file.
+   grep for "mcp" over the tree hits only `CHANGELOG.md` and this file. Also grep
+   for the five bare operation names (`nimble_agents_generate`,
+   `nimble_agents_update_from_agent`, `nimble_agents_update_session`,
+   `nimble_agents_status`, `nimble_agents_publish`) — they don't contain the
+   string "mcp", so the mcp grep misses them; every use must remain defined by
+   the "Operation name glossary" in
+   `nimble-agent-builder/references/agent-api-reference.md`.
 5. Update the commit/date table above (including the upstream version row) and
    commit.
