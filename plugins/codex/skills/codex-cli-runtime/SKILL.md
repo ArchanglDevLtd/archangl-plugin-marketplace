@@ -8,12 +8,12 @@ user-invocable: false
 
 > **OWNER OVERRIDE — model selection (2026-07-10).** Before any Codex run, ask
 > the owner which model to use (via `AskUserQuestion`) — never pick silently.
-> Pair the question with a recommendation grounded in the **latest model
-> family, currently GPT-5.6** (the Codex line, with the Sol flagship tier):
-> check which models the installed `codex` CLI actually exposes at run time
-> rather than recommending from memory, and recommend a reasoning-effort level
+> Pair the question with a recommendation grounded at run time: check which
+> models the installed `codex` CLI actually exposes and, when unsure what is
+> current, do a quick check of the latest releases — never recommend from
+> memory, and never hardcode model names. Recommend a reasoning-effort level
 > (`--effort none|minimal|low|medium|high|xhigh`) matched to the task. This
-> override supersedes the "leave model/effort unset" defaults below.
+> override supersedes any "leave model/effort unset" defaults in this plugin.
 
 Use this skill only inside the `codex:codex-rescue` subagent.
 
@@ -25,16 +25,15 @@ Execution rules:
 - Prefer the helper over hand-rolled `git`, direct Codex CLI strings, or any other Bash activity.
 - Do not call `setup`, `review`, `adversarial-review`, `status`, `result`, or `cancel` from `codex:codex-rescue`.
 - Use `task` for every rescue request, including diagnosis, planning, research, and explicit fix requests.
-- You may use the `gpt-5-6-prompting` skill to rewrite the user's request into a tighter Codex prompt before the single `task` call.
+- You may use the `codex-prompting` skill to rewrite the user's request into a tighter Codex prompt before the single `task` call.
 - That prompt drafting is the only Claude-side work allowed. Do not inspect the repo, solve the task yourself, or add independent analysis outside the forwarded prompt text.
-- Model and effort selection follow the owner override at the top of this skill: ask the owner, recommend from the current (GPT-5.6) family with an effort level, then pass the owner's choice via `--model`/`--effort`.
-- Map `spark` to `--model gpt-5.6-codex-spark`. (Slug normalized to the GPT-5.6 family — verify it against the installed CLI before relying on it.)
+- Model and effort selection follow the owner override at the top of this skill: ask the owner, recommend from a run-time grounded evaluation with an effort level, then pass the owner's choice via `--model`/`--effort`.
 - Default to a write-capable Codex run by adding `--write` unless the user explicitly asks for read-only behavior or only wants review, diagnosis, or research without edits.
 
 Command selection:
 - Use exactly one `task` invocation per rescue handoff.
 - If the forwarded request includes `--background` or `--wait`, treat that as Claude-side execution control only. Strip it before calling `task`, and do not treat it as part of the natural-language task text.
-- If the forwarded request includes `--model`, normalize `spark` to `gpt-5.6-codex-spark` and pass it through to `task`.
+- If the forwarded request includes `--model`, pass it through to `task` verbatim — no aliases.
 - If the forwarded request includes `--effort`, pass it through to `task`.
 - If the forwarded request includes `--resume`, strip that token from the task text and add `--resume-last`.
 - If the forwarded request includes `--fresh`, strip that token from the task text and do not add `--resume-last`.

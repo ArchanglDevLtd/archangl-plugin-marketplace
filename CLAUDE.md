@@ -76,7 +76,7 @@ The marketplace (`name: archangl-plugin-marketplace`) lists eight plugins:
 
 | Plugin | What it is | Notes |
 | --- | --- | --- |
-| `archangl-studio` | Creative production skills (currently `improve-shotlist`) | First-party |
+| `archangl-studio` | Creative production suite — `brand-voice`, `content-engine`, `crosspost`, `lead-intelligence` (+ 4 subagents) | First-party. `lead-intelligence` routes web data through the `nimble` plugin's skills |
 | `archangl-search` | Research **orchestrator** — one skill, `archangl-search` (invoked as `/archangl-search:archangl-search`) | **Depends on** `nimble`; installing it auto-pulls it |
 | `archangl-pocock` | **Vendored snapshot** of Matt Pocock's skills (21 engineering/productivity skills) | Frozen copy; see `plugins/archangl-pocock/SNAPSHOT.md` |
 | `nimble` | **Vendored snapshot** of Nimble's agent-skills — web search/extract/map/crawl plus business-research, SEO, marketing, and productivity skills, two research agents, and a `/nimble:search` command. **CLI transport only** | Frozen copy with the MCP wiring stripped; see `plugins/nimble/SNAPSHOT.md` |

@@ -1,23 +1,21 @@
 ---
-name: gpt-5-6-prompting
-description: Internal guidance for composing Codex and GPT-5.6 prompts for coding, review, diagnosis, and research tasks inside the Codex Claude Code plugin
+name: codex-prompting
+description: Internal guidance for composing Codex prompts for coding, review, diagnosis, and research tasks inside the Codex Claude Code plugin
 user-invocable: false
 ---
 
-# GPT-5.6 Prompting
+# Codex Prompting
 
 > **OWNER OVERRIDE — model selection (2026-07-10).** Before any Codex run, ask
 > the owner which model to use (via `AskUserQuestion`) — never pick silently.
-> Pair the question with a recommendation grounded in the **latest model
-> family, currently GPT-5.6** (the Codex line, with the Sol flagship tier):
-> check which models the installed `codex` CLI actually exposes at run time
-> rather than recommending from memory, and recommend a reasoning-effort level
+> Pair the question with a recommendation grounded at run time: check which
+> models the installed `codex` CLI actually exposes and, when unsure what is
+> current, do a quick check of the latest releases — never recommend from
+> memory, and never hardcode model names. Recommend a reasoning-effort level
 > (`--effort none|minimal|low|medium|high|xhigh`) matched to the task. This
 > override supersedes any "leave model/effort unset" defaults in this plugin.
-> All model references in this plugin are normalized to the GPT-5.6 family — the
-> prompting contracts below carry over unchanged.
 
-Use this skill when `codex:codex-rescue` needs to ask Codex or another GPT-5.6-based workflow for help.
+Use this skill when `codex:codex-rescue` needs to ask Codex for help.
 
 Prompt Codex like an operator, not a collaborator. Keep prompts compact and block-structured with XML tags. State the task, the output contract, the follow-through defaults, and the small set of extra constraints that matter.
 

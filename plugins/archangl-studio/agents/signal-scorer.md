@@ -1,6 +1,6 @@
 ---
 name: signal-scorer
-description: Searches and ranks prospects by relevance signals across X, Exa, and LinkedIn. Assigns weighted scores based on role, industry, activity, influence, and location.
+description: Searches and ranks prospects by relevance signals across X, Nimble web search, and LinkedIn. Assigns weighted scores based on role, industry, activity, influence, and location.
 tools:
   - Bash
   - Read
@@ -32,7 +32,7 @@ Given target verticals, roles, and locations from the user, search for the highe
 
 ## Search Strategy
 
-1. Use Exa web search with category filters for company and person discovery
+1. Use Nimble web search (via the nimble plugin's skills) for company and person discovery
 2. Use X API search for active voices in the target verticals
 3. Cross-reference to deduplicate and merge profiles
 4. Score each prospect on the 0-100 scale using the rubric above

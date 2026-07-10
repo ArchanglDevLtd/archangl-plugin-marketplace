@@ -21,13 +21,13 @@ Agent-powered lead intelligence pipeline that finds, scores, and reaches high-va
 ## Tool Requirements
 
 ### Required
-- **Exa MCP** — Deep web search for people, companies, and signals (`web_search_exa`)
+- **Nimble (this marketplace's web-data provider)** — deep web search for people, companies, and signals, routed through the `nimble` plugin's skills (`/nimble:nimble-web-expert` for search/extract; `/nimble:company-deep-dive`, `/nimble:talent-sourcing` when a stage matches) — never raw API calls; if the nimble plugin is missing, stop and say so
 - **X API** — Follower/following graph, mutual analysis, recent activity (`X_BEARER_TOKEN`, plus write-context credentials such as `X_CONSUMER_KEY`, `X_CONSUMER_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_TOKEN_SECRET`)
 
 ### Optional (enhance results)
 - **LinkedIn** — Direct API if available, otherwise browser control for search, profile inspection, and drafting
 - **Apollo/Clay API** — For enrichment cross-reference if user has access
-- **GitHub MCP** — For developer-centric lead qualification
+- **GitHub** — For developer-centric lead qualification (via the session's GitHub tooling)
 - **Apple Mail / Mail.app** — Draft cold or warm email without sending automatically
 - **Browser control** — For LinkedIn and X when API coverage is missing or constrained
 
@@ -54,11 +54,11 @@ Search for high-signal people in target verticals. Assign a weight to each based
 
 | Signal | Weight | Source |
 |--------|--------|--------|
-| Role/title alignment | 30% | Exa, LinkedIn |
-| Industry match | 25% | Exa company search |
-| Recent activity on topic | 20% | X API search, Exa |
+| Role/title alignment | 30% | Nimble search, LinkedIn |
+| Industry match | 25% | Nimble company research |
+| Recent activity on topic | 20% | X API search, Nimble |
 | Follower count / influence | 10% | X API |
-| Location proximity | 10% | Exa, LinkedIn |
+| Location proximity | 10% | Nimble search, LinkedIn |
 | Engagement with your content | 5% | X API interactions |
 
 ### Signal Search Approach
@@ -69,14 +69,10 @@ target_verticals = ["prediction markets", "AI tooling", "developer tools"]
 target_roles = ["founder", "CEO", "CTO", "VP Engineering", "investor", "partner"]
 target_locations = ["San Francisco", "New York", "London", "remote"]
 
-# Step 2: Exa deep search for people
-for vertical in target_verticals:
-    results = web_search_exa(
-        query=f"{vertical} {role} founder CEO",
-        category="company",
-        numResults=20
-    )
-    # Score each result
+# Step 2: Nimble deep search for people — dispatch through the nimble plugin's
+# skills (/nimble:nimble-web-expert), one search per vertical, e.g.:
+#   "{vertical} {role} founder CEO" with a people/company focus, ~20 results
+# Score each result from the returned structured data
 
 # Step 3: X API search for active voices
 x_search = search_recent_tweets(
@@ -172,7 +168,7 @@ For each qualified lead, pull:
 - Recent company events (product launch, funding round, hiring)
 
 ### Enrichment Sources
-- Exa: company data, news, blog posts
+- Nimble: company data, news, blog posts
 - X API: recent tweets, bio, followers
 - GitHub: open source contributions (for developer-centric leads)
 - LinkedIn (via browser-use): full profile, experience, education
@@ -308,7 +304,7 @@ This skill includes specialized agents in the `agents/` subdirectory:
 User: find me the top 20 people in prediction markets I should reach out to
 
 Agent workflow:
-1. signal-scorer searches Exa and X for prediction market leaders
+1. signal-scorer searches Nimble and X for prediction market leaders
 2. mutual-mapper checks user's X graph for shared connections
 3. enrichment-agent pulls company data and recent activity
 4. outreach-drafter generates personalized messages for top ranked leads
