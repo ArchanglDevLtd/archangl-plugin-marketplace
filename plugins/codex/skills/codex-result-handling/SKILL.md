@@ -6,6 +6,12 @@ user-invocable: false
 
 # Codex Result Handling
 
+> **OWNER OVERRIDE — model selection (2026-07-10).** If a follow-up Codex run
+> is proposed while presenting results, model choice follows the owner override
+> in `codex-cli-runtime`: ask the owner which model to use, recommend from the
+> current (GPT-5.6) family grounded against the installed `codex` CLI, and
+> recommend a reasoning-effort level.
+
 When the helper returns Codex output:
 - Preserve the helper's verdict, summary, findings, and next steps structure.
 - For review output, present findings first and keep them ordered by severity.

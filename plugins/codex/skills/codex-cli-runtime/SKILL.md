@@ -6,6 +6,15 @@ user-invocable: false
 
 # Codex Runtime
 
+> **OWNER OVERRIDE — model selection (2026-07-10).** Before any Codex run, ask
+> the owner which model to use (via `AskUserQuestion`) — never pick silently.
+> Pair the question with a recommendation grounded in the **latest model
+> family, currently GPT-5.6** (the Codex line, with the Sol flagship tier):
+> check which models the installed `codex` CLI actually exposes at run time
+> rather than recommending from memory, and recommend a reasoning-effort level
+> (`--effort none|minimal|low|medium|high|xhigh`) matched to the task. This
+> override supersedes the "leave model/effort unset" defaults below.
+
 Use this skill only inside the `codex:codex-rescue` subagent.
 
 Primary helper:
@@ -18,9 +27,8 @@ Execution rules:
 - Use `task` for every rescue request, including diagnosis, planning, research, and explicit fix requests.
 - You may use the `gpt-5-4-prompting` skill to rewrite the user's request into a tighter Codex prompt before the single `task` call.
 - That prompt drafting is the only Claude-side work allowed. Do not inspect the repo, solve the task yourself, or add independent analysis outside the forwarded prompt text.
-- Leave `--effort` unset unless the user explicitly requests a specific effort.
-- Leave model unset by default. Add `--model` only when the user explicitly asks for one.
-- Map `spark` to `--model gpt-5.3-codex-spark`.
+- Model and effort selection follow the owner override at the top of this skill: ask the owner, recommend from the current (GPT-5.6) family with an effort level, then pass the owner's choice via `--model`/`--effort`.
+- Map `spark` to `--model gpt-5.3-codex-spark`. (This alias predates the GPT-5.6 family — verify the current spark-tier slug against the installed CLI before relying on it.)
 - Default to a write-capable Codex run by adding `--write` unless the user explicitly asks for read-only behavior or only wants review, diagnosis, or research without edits.
 
 Command selection:
