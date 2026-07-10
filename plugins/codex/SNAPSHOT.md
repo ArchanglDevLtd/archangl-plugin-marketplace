@@ -31,14 +31,20 @@ libraries, `prompts/`, `schemas/`, `CHANGELOG.md`, `NOTICE`, and `LICENSE`
 
 - **`plugin.json` `version` (was `1.0.6`) was removed** so this repo's commits
   drive updates (repo rule 3). Every other manifest field is verbatim.
-- **Model-guidance override (owner request, 2026-07-10):** each of the three
-  skills carries an owner override block at the top of its `SKILL.md` — agents
-  must ask the owner which Codex model to use and recommend from a grounded
-  evaluation of the current model family plus a reasoning-effort level — and
-  model references in skill content were moved from GPT-5.4 semantics to the
-  GPT-5.6 family. The `gpt-5-4-prompting` skill directory/name is kept (renaming
-  would change the skill's invocation name); its content and override carry the
-  5.6 semantics.
+- **Model-guidance override + full 5.6 normalization (owner request,
+  2026-07-10):** each of the three skills carries an owner override block at
+  the top of its `SKILL.md` — agents must ask the owner which Codex model to
+  use and recommend from a grounded evaluation of the current model family
+  plus a reasoning-effort level. Every model-version reference in the plugin
+  was then normalized to the GPT-5.6 family: the prompting skill was renamed
+  `gpt-5-4-prompting` → `gpt-5-6-prompting` (directory, frontmatter `name`,
+  and all cross-references in `codex-cli-runtime`, `agents/codex-rescue.md`);
+  the `spark` alias slug became `gpt-5.6-codex-spark` in
+  `codex-cli-runtime/SKILL.md`, `agents/codex-rescue.md`,
+  `commands/rescue.md`, and `scripts/codex-companion.mjs` (`MODEL_ALIASES`);
+  the `gpt-5.4-mini` example became `gpt-5.6-mini`. The 5.6 spark slug is
+  inferred from upstream's naming pattern — the runtime skill instructs
+  verifying it against the installed CLI before relying on it.
 - **No MCP strip was needed**: the plugin bundles no `.mcp.json` and no
   `mcpServers` block. `scripts/lib/codex.mjs` contains `mcpToolCall` protocol
   handling and passes an empty `mcpServers` list to the Codex app-server —

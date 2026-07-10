@@ -1,5 +1,5 @@
 ---
-name: gpt-5-4-prompting
+name: gpt-5-6-prompting
 description: Internal guidance for composing Codex and GPT-5.6 prompts for coding, review, diagnosis, and research tasks inside the Codex Claude Code plugin
 user-invocable: false
 ---
@@ -14,7 +14,7 @@ user-invocable: false
 > rather than recommending from memory, and recommend a reasoning-effort level
 > (`--effort none|minimal|low|medium|high|xhigh`) matched to the task. This
 > override supersedes any "leave model/effort unset" defaults in this plugin.
-> Read the GPT-5.4-era references in this skill as the GPT-5.6 family — the
+> All model references in this plugin are normalized to the GPT-5.6 family — the
 > prompting contracts below carry over unchanged.
 
 Use this skill when `codex:codex-rescue` needs to ask Codex or another GPT-5.6-based workflow for help.
