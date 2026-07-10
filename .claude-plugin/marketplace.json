@@ -27,6 +27,11 @@
       "description": "Vendored snapshot of Nimble's agent-skills (Nimbleway/agent-skills): web search, extraction, mapping, and crawling plus business-research, SEO, marketing, and productivity skills — all through the nimble CLI (NIMBLE_API_KEY)."
     },
     {
+      "name": "context7",
+      "source": "./plugins/context7",
+      "description": "Context7 documentation skills (context7-cli and find-docs): fetch up-to-date library docs and manage AI coding skills through the ctx7 CLI. CLI transport only."
+    },
+    {
       "name": "marketing-skills",
       "source": "./plugins/marketing-skills",
       "description": "Vendored snapshot of Corey Haines' marketingskills: 47 marketing skills for AI agents — conversion optimization, copywriting, SEO, paid ads, ad creative, and growth."
