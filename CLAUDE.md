@@ -72,7 +72,7 @@ CLI (`@nimble-way/nimble-cli`), which reads `NIMBLE_API_KEY` from the environmen
 
 ## Current contents
 
-The marketplace (`name: archangl-plugin-marketplace`) lists six plugins:
+The marketplace (`name: archangl-plugin-marketplace`) lists seven plugins:
 
 | Plugin | What it is | Notes |
 | --- | --- | --- |
@@ -81,6 +81,7 @@ The marketplace (`name: archangl-plugin-marketplace`) lists six plugins:
 | `archangl-pocock` | **Vendored snapshot** of Matt Pocock's skills (21 engineering/productivity skills) | Frozen copy; see `plugins/archangl-pocock/SNAPSHOT.md` |
 | `nimble` | **Vendored snapshot** of Nimble's agent-skills — web search/extract/map/crawl plus business-research, SEO, marketing, and productivity skills, two research agents, and a `/nimble:search` command. **CLI transport only** | Frozen copy with the MCP wiring stripped; see `plugins/nimble/SNAPSHOT.md` |
 | `context7` | **Vendored snapshot** of two Context7 (Upstash) documentation skills — `context7-cli` and `find-docs`, driving the `ctx7` CLI. **CLI transport only** | Assembled from an owner-provided archive, MCP mode stripped; see `plugins/context7/SNAPSHOT.md` |
+| `qmd` | **Vendored snapshot** of Tobi Lütke's qmd — local markdown search (BM25 + vector) via the `qmd` CLI, one `qmd` skill (plus upstream's `release` repo-tooling skill). **CLI transport only** | Frozen copy with the MCP transport stripped; see `plugins/qmd/SNAPSHOT.md` |
 | `marketing-skills` | **Vendored snapshot** of Corey Haines' marketingskills (47 marketing skills) | Frozen copy; see `plugins/marketing-skills/SNAPSHOT.md` |
 
 `archangl-search`'s skill deliberately does **not** run `nimble` CLI commands
