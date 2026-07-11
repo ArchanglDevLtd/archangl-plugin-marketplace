@@ -1,0 +1,9 @@
+{
+  "name": "archangl-utils",
+  "description": "First-party utility skills for archangl's environments, starting with higgsfield-auth-handoff (secure local-to-session Higgsfield CLI credential transfer).",
+  "author": {
+    "name": "archangl",
+    "email": "hello@archangl.ai"
+  },
+  "keywords": ["utils", "higgsfield", "auth", "credentials", "cli"]
+}

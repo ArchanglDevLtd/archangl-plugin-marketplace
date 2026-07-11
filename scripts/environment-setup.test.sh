@@ -5,7 +5,7 @@
 # script's public contract, nothing internal:
 #   1. exit 0 on a fresh environment (and with NIMBLE_API_KEY missing)
 #   2. log contract: key warning + install summary
-#   3. post-condition: nimble/ctx7/qmd/codex installed into the sandbox prefix
+#   3. post-condition: nimble/ctx7/qmd/codex/apify installed into the sandbox prefix
 #   4. post-condition: marketplace registered, all catalog plugins installed
 #   5. idempotency: second run exits 0 and skips CLI reinstalls
 set -u
@@ -40,11 +40,13 @@ echo "== RUN 1 (fresh sandbox, no NIMBLE_API_KEY) =="
 run_sandboxed "$SBX/run1.log"; RC1=$?
 t "seam 1: exit code 0 on fresh environment"        test "$RC1" -eq 0
 t "seam 2: NIMBLE_API_KEY warning emitted"          grep -q 'WARN: NIMBLE_API_KEY not seeded' "$SBX/run1.log"
+t "seam 2: APIFY_TOKEN warning emitted"             grep -q 'WARN: APIFY_TOKEN not seeded' "$SBX/run1.log"
 t "seam 2: install summary line emitted"            grep -qE '\[setup\] installed/enabled [0-9]+ plugin\(s\)' "$SBX/run1.log"
 t "seam 3: nimble CLI installed in sandbox"         test -x "$SBX/npm/bin/nimble"
 t "seam 3: ctx7 CLI installed in sandbox"           test -x "$SBX/npm/bin/ctx7"
 t "seam 3: qmd CLI installed in sandbox"            test -x "$SBX/npm/bin/qmd"
 t "seam 3: codex CLI installed in sandbox"          test -x "$SBX/npm/bin/codex"
+t "seam 3: apify CLI installed in sandbox"          test -x "$SBX/npm/bin/apify"
 t "seam 4: marketplace registered in sandbox HOME"  sh -c "env -i HOME='$SBX/home' PATH='$SBX_PATH' claude plugin marketplace list 2>/dev/null | grep -qi archangl"
 t "seam 4: all $EXPECTED_PLUGINS catalog plugins installed" sh -c "env -i HOME='$SBX/home' PATH='$SBX_PATH' claude plugin list 2>/dev/null | grep -c 'archangl-plugin-marketplace' | grep -qx $EXPECTED_PLUGINS"
 

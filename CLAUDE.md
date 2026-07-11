@@ -72,7 +72,7 @@ CLI (`@nimble-way/nimble-cli`), which reads `NIMBLE_API_KEY` from the environmen
 
 ## Current contents
 
-The marketplace (`name: archangl-plugin-marketplace`) lists eight plugins:
+The marketplace (`name: archangl-plugin-marketplace`) lists ten plugins:
 
 | Plugin | What it is | Notes |
 | --- | --- | --- |
@@ -84,6 +84,8 @@ The marketplace (`name: archangl-plugin-marketplace`) lists eight plugins:
 | `qmd` | **Vendored snapshot** of Tobi Lütke's qmd — local markdown search (BM25 + vector) via the `qmd` CLI, one `qmd` skill (plus upstream's `release` repo-tooling skill). **CLI transport only** | Frozen copy with the MCP transport stripped; see `plugins/qmd/SNAPSHOT.md` |
 | `marketing-skills` | **Vendored snapshot** of Corey Haines' marketingskills (47 marketing skills) | Frozen copy; see `plugins/marketing-skills/SNAPSHOT.md` |
 | `codex` | **Vendored snapshot** of OpenAI's Codex plugin — 8 commands, 3 skills, `codex-rescue` agent, and hooks driving the `codex` CLI | Frozen copy (replaced main's live git-subdir source at merge time); see `plugins/codex/SNAPSHOT.md` |
+| `archangl-apify` | **Consolidated frozen snapshot** of Apify's two skill repos (awesome-skills + agent-skills) — 17 skills + 2 commands driving the `apify` CLI / REST (`APIFY_TOKEN`). **CLI transport only** | MCP stripped throughout; one skill ships in documented degraded mode (Ahrefs scoring removed); see `plugins/archangl-apify/SNAPSHOT.md` |
+| `archangl-utils` | First-party utilities — `higgsfield-auth-handoff` (secure local→session Higgsfield credential transfer; the credentials file is copied, never read) | First-party |
 
 `archangl-search`'s skill deliberately does **not** run `nimble` CLI commands
 directly. It routes searching/reading through the nimble plugin's own skills

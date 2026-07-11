@@ -1,0 +1,11 @@
+{
+  "name": "archangl-apify",
+  "description": "Consolidated Apify skills — 10 vertical web-data workflow skills (ads intelligence, e-commerce, financial services, lead prospecting, and more) plus 5 Actor-development skills, all driving the apify CLI (APIFY_TOKEN). CLI transport only.",
+  "author": {
+    "name": "archangl",
+    "email": "hello@archangl.ai"
+  },
+  "homepage": "https://apify.com",
+  "license": "Apache-2.0",
+  "keywords": ["apify", "web-scraping", "actors", "leads", "data-extraction", "cli"]
+}
