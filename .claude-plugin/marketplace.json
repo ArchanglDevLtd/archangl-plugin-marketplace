@@ -42,6 +42,11 @@
       "description": "Vendored snapshot of Corey Haines' marketingskills: 47 marketing skills for AI agents — conversion optimization, copywriting, SEO, paid ads, ad creative, and growth."
     },
     {
+      "name": "archangl-utils",
+      "source": "./plugins/archangl-utils",
+      "description": "First-party utility skills, starting with higgsfield-auth-handoff: securely move a Higgsfield CLI login from the owner's machine into a session (copy-only credential transfer, never read into context)."
+    },
+    {
       "name": "archangl-apify",
       "source": "./plugins/archangl-apify",
       "description": "Consolidated frozen snapshot of Apify's skills (apify/awesome-skills + apify/agent-skills): 10 vertical web-data workflow skills plus 5 Actor-development skills, all through the apify CLI (APIFY_TOKEN). CLI transport only."
