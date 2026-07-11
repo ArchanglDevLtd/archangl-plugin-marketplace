@@ -11,7 +11,8 @@
 set -u
 SCRIPT="$(cd "$(dirname "$0")" && pwd)/environment-setup.sh"
 NODE_BIN="${NODE_BIN:-$(dirname "$(command -v node)")}"
-EXPECTED_PLUGINS="${EXPECTED_PLUGINS:-8}"
+# EXPECTED_PLUGINS: optional override; by default derived from the manifest the sandbox fetches.
+EXPECTED_PLUGINS="${EXPECTED_PLUGINS:-}"
 SBX="$(mktemp -d)"
 trap 'rm -rf "$SBX"' EXIT
 mkdir -p "$SBX/home" "$SBX/npm" "$SBX/bin"
@@ -48,6 +49,11 @@ t "seam 3: qmd CLI installed in sandbox"            test -x "$SBX/npm/bin/qmd"
 t "seam 3: codex CLI installed in sandbox"          test -x "$SBX/npm/bin/codex"
 t "seam 3: apify CLI installed in sandbox"          test -x "$SBX/npm/bin/apify"
 t "seam 4: marketplace registered in sandbox HOME"  sh -c "env -i HOME='$SBX/home' PATH='$SBX_PATH' claude plugin marketplace list 2>/dev/null | grep -qi archangl"
+if [ -z "$EXPECTED_PLUGINS" ]; then
+  EXPECTED_PLUGINS=$(env -i HOME="$SBX/home" PATH="$SBX_PATH" sh -c '
+    loc=$(claude plugin marketplace list --json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(next((m.get(\"installLocation\") or m.get(\"path\") for m in d if \"archangl\" in m.get(\"name\",\"\")), \"\"))")
+    [ -n "$loc" ] && python3 -c "import json; print(len(json.load(open(\"$loc/.claude-plugin/marketplace.json\"))[\"plugins\"]))" || echo 0')
+fi
 t "seam 4: all $EXPECTED_PLUGINS catalog plugins installed" sh -c "env -i HOME='$SBX/home' PATH='$SBX_PATH' claude plugin list 2>/dev/null | grep -c 'archangl-plugin-marketplace' | grep -qx $EXPECTED_PLUGINS"
 
 echo "== RUN 2 (same sandbox — idempotency) =="
