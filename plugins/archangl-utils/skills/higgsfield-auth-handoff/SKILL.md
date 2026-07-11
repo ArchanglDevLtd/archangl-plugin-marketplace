@@ -59,10 +59,13 @@ If the `higgsfield` CLI is not installed in the session yet, install it first:
 ## Step 4 — Verify silently, then clean up
 
 ```bash
-higgsfield auth status            # prints login state, not the token
 higgsfield auth token >/dev/null && echo "higgsfield CLI: authenticated"
 rm -f "<uploaded-file-path>"      # remove the loose copy from the uploads dir
 ```
+
+(The CLI has no `auth status` subcommand — its auth surface is exactly
+`login`, `token`, `logout` — so the redirected `token` call above is the
+verification. Never drop the `>/dev/null`.)
 
 Report only "authenticated" or the failure state — never token material.
 Suggest the owner also delete the `higgsfield_token_*.json` from their local
