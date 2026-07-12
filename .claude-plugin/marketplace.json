@@ -55,6 +55,11 @@
       "name": "codex",
       "source": "./plugins/codex",
       "description": "Vendored snapshot of OpenAI's Codex plugin (openai/codex-plugin-cc, upstream v1.0.6): use Codex from Claude Code to review code or delegate tasks — commands, skills, agents, and hooks driving the codex CLI."
+    },
+    {
+      "name": "landing",
+      "source": "./plugins/landing",
+      "description": "Vendored snapshot of Alireza Rezvani's marketing/landing plugin (alirezarezvani/claude-skills): premium single-file HTML landing page generator with GSAP animations and mouse-parallax depth — grill-me intake, one skill, a cs-landing agent, and stdlib Python validators."
     }
   ]
 }
